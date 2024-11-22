@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct ContentView: View {
     @State var roundTime: Int = 0
@@ -26,6 +27,9 @@ struct ContentView: View {
         time = resting ? restTime : roundTime
     }
     
+    func playSound() {
+        SoundManager.shared.playSound(named: "bell")
+    }
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -53,9 +57,11 @@ struct ContentView: View {
                                 resting.toggle()
                                 if resting {
                                     time = restTime
+                                    playSound() // Play bell sound when rest starts
                                 } else {
                                     time = roundTime
                                     sets += 1
+                                    playSound() // Play a bell sound when rest is over
                                 }
                             } else if !(paused) {
                                 workoutFinished.toggle()
@@ -158,6 +164,25 @@ struct ContentView: View {
         }
     }
 }
+
+class SoundManager {
+    static let shared = SoundManager()
+    var player: AVAudioPlayer?
+
+    func playSound(named soundName: String) {
+        if let url = Bundle.main.url(forResource: soundName, withExtension: "mp3") {
+            do {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.play()
+            } catch {
+                print("Error playing sound: \(error.localizedDescription)")
+            }
+        } else {
+            print("Sound file not found.")
+        }
+    }
+}
+
 
 #Preview {
     ContentView()
