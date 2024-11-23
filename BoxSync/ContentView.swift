@@ -27,8 +27,8 @@ struct ContentView: View {
         time = resting ? restTime : roundTime
     }
     
-    func playSound() {
-        SoundManager.shared.playSound(named: "bell")
+    func playSound(soundName: String) {
+        SoundManager.shared.playSound(named: soundName)
     }
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -57,11 +57,11 @@ struct ContentView: View {
                                 resting.toggle()
                                 if resting {
                                     time = restTime
-                                    playSound() // Play bell sound when rest starts
+                                    playSound(soundName: "bell") // Play bell sound when rest starts
                                 } else {
                                     time = roundTime
                                     sets += 1
-                                    playSound() // Play a bell sound when rest is over
+                                    playSound(soundName: "bell") // Play a bell sound when rest is over
                                 }
                             } else if !(paused) {
                                 workoutFinished.toggle()
@@ -69,6 +69,9 @@ struct ContentView: View {
                                 sets = 1
                                 time = roundTime
                                 resting = false
+                            }
+                            if (time == 5) && (!paused){
+                                playSound(soundName: "fiveSec")
                             }
                         }
 
