@@ -14,6 +14,9 @@ struct OptionsView: View {
     @State private var restMinutes = 0
     @State private var restSeconds = 0
     @State private var showAlert = false
+    @State private var setsString: String = ""
+    
+    @FocusState private var keyboardFocused: Bool
     
     @Binding var areOptionsVisible: Bool
     @Binding var roundTime: Int
@@ -25,6 +28,12 @@ struct OptionsView: View {
     func saveChanges() {
         roundTime = roundMinutes * 60 + roundSeconds
         restTime = restMinutes * 60 + restSeconds
+        
+        // Convert sets from String to Int and assign it onto the binding var.
+        if let intSets = Int(setsString) {
+            sets = intSets
+        }
+        
         resetTimer() // Reset timer on main View to update values
         areOptionsVisible = false
     }
@@ -103,6 +112,46 @@ struct OptionsView: View {
                         .cornerRadius(10))
                     .padding()
                     
+                    // Textfield to edit number of sets
+                    VStack{
+                        TextField("Number of sets", text: $setsString)
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 10)
+                                            .fill(Color(.secondarySystemBackground)))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.blue, lineWidth: 1)
+                            )
+                            .foregroundColor(.primary)
+                            .font(.system(size: 18, weight: .medium))
+                            .keyboardType(.decimalPad)
+                            .focused($keyboardFocused)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 3)
+//                            .toolbar {
+//                                 ToolbarItemGroup(placement: .keyboard) {
+//                                     // the Spacer will push the Done button to the far right of the keyboard as pictured.
+//                                     Spacer()
+//                                     
+//                                     Button(action: {
+//                                         keyboardFocused = false
+//                                     }, label: {
+//                                         Text("Done")
+//                                     })
+//                                     
+//                                 }
+//                             }
+//
+//  For some god damn reason the code that worked on repsync for
+//  the toolbar done button on a decimal pad
+//  decided to not work here.
+//  I give up.
+//
+                        
+                    }
+
+                    
                     // button to save changes
                     Button(action: saveChanges) {
                         Label("Save", systemImage: "checkmark")
@@ -115,7 +164,3 @@ struct OptionsView: View {
                 }
             }
         }
-//
-//#Preview {
-//    OptionsView()
-//}
